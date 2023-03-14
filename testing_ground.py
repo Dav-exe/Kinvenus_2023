@@ -14,7 +14,7 @@ class Out30BFile:
     def get_lines(self, starting_line):
         for i, line in enumerate(self.lines):
             #officer this man here 
-            if line.strip() == starting_line:
+            if starting_line.strip() in line:
                 next_lines = []
                 empty_line_count = 0
                 for j in range(1, len(self.lines)):
@@ -33,8 +33,10 @@ class Out30BFile:
                         if ')' in curr_line[1:4]:
                             curr_line = curr_line.split(None, 1)[1]
                         next_lines.append(curr_line)
+                global line_searched 
+                line_searched = (line)
                 return '\n'.join(next_lines)
-        print('input search d_lines is not found')
+        print("input search d_lines is not found")
         exit()
 
 def process_data(data):
@@ -111,19 +113,22 @@ def csv_saved(csv_file, filename):
 #change the file to be searched in the line 
 out30b = Out30BFile("kinvenus_2022oct07_so2cl2_s8_so2_3ppm_nominalclso2.out030b")
 #change the row searched for data in this line (for now must be the whole row)
-d_lines = (out30b.get_lines("MIXING RATIOS :"))
+d_lines = (out30b.get_lines("MIXING"))
 
 #find a better way of writing the ans bit 
 ans = remove_duplicate_altitudes(merging_data(process_data(d_lines)))
 #print (ans)
 
-#csv_saved(ans,"thiswontwork#2.csv")
+csv_saved(ans,"thiswontwork#2.csv")
 
-convert_array_to_nc(ans, "thiswontwork#3.nc")
+#convert_array_to_nc(ans, "thiswontwork#3.nc")
+print (line_searched)
+
 
 '''TO DO'''
 #add incorrect search response                                  |||DONE
 #fix the called upon error at ans                               |||TO DO
 #make an adjustable search below TSTEP line                     |||TO DO
-#change the search from the whole line to just a fraise         |||TO DO
+#change the search from the whole line to just a fraise         |||DONE
 #tidy and optimize                                              |||TO DO 
+#tell the user the array searched                               |||DONE
