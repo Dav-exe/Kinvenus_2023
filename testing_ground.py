@@ -3,13 +3,15 @@ import numpy as np
 import csv
 import netCDF4
 
-
 class Out30BFile:
     def __init__(self, filepath):
         self.filepath = filepath
         self.lines = []
         with open(filepath, 'r') as f:
             self.lines = f.readlines()
+        global file_searched
+        file_searched = filepath
+
 
     def get_lines(self, starting_line):
         for i, line in enumerate(self.lines):
@@ -36,7 +38,7 @@ class Out30BFile:
                 global line_searched 
                 line_searched = (line)
                 return '\n'.join(next_lines)
-        print("input search d_lines is not found")
+        print("input search data group is not found")
         exit()
 
 def process_data(data):
@@ -113,7 +115,7 @@ def csv_saved(csv_file, filename):
 #change the file to be searched in the line 
 out30b = Out30BFile("kinvenus_2022oct07_so2cl2_s8_so2_3ppm_nominalclso2.out030b")
 #change the row searched for data in this line (for now must be the whole row)
-d_lines = (out30b.get_lines("MIXING"))
+d_lines = (out30b.get_lines("MIXING RATIOS :"))
 
 #find a better way of writing the ans bit 
 ans = remove_duplicate_altitudes(merging_data(process_data(d_lines)))
@@ -122,7 +124,8 @@ ans = remove_duplicate_altitudes(merging_data(process_data(d_lines)))
 csv_saved(ans,"thiswontwork#2.csv")
 
 #convert_array_to_nc(ans, "thiswontwork#3.nc")
-print (line_searched)
+print ("the data group read is",line_searched)
+print ("the file read is",file_searched)
 
 
 '''TO DO'''
@@ -131,4 +134,4 @@ print (line_searched)
 #make an adjustable search below TSTEP line                     |||TO DO
 #change the search from the whole line to just a fraise         |||DONE
 #tidy and optimize                                              |||TO DO 
-#tell the user the array searched                               |||DONE
+#tell the user the array and file searched                      |||DONE
