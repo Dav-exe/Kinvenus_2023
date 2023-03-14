@@ -13,36 +13,35 @@ class Out30BFile:
         file_searched = filepath
 
     def get_lines(self, starting_line):
-        for i, line in enumerate(self.lines):
-            #officer this man here 
-            if starting_line.strip() in line:
-                next_lines = []
-                empty_line_count = 0
-                for j in range(1, len(self.lines)):
-                    if i+j < len(self.lines):
-                        if not self.lines[i+j].strip():
-                            empty_line_count += 1
-                            if empty_line_count >= 2:
-                                break
-                            continue
-                        else:
-                            empty_line_count = 0
-                        if self.lines[i+j].strip().startswith("COLUMN"):
-                            continue
-                        curr_line = self.lines[i+j].strip()
-                        curr_line = curr_line.rstrip(')')
-                        if ')' in curr_line[1:4]:
-                            curr_line = curr_line.split(None, 1)[1]
-                        next_lines.append(curr_line)
-                #code helping to output relevant naming info 
-                global line_searched
-                line_searched = ((line).strip()).replace(":", "").replace(" ", "_")
-                global line_read
-                line_read = starting_line
-                return '\n'.join(next_lines)
-        #lines below run if the input searched lines do not exist
-        print("input search data group is not found")
-        exit()
+            for i, line in enumerate(self.lines):
+                if starting_line.strip() in line:
+                    next_lines = []
+                    empty_line_count = 0
+                    for j in range(1, len(self.lines)):
+                        if i+j < len(self.lines):
+                            if not self.lines[i+j].strip():
+                                empty_line_count += 1
+                                if empty_line_count >= 2:
+                                    break
+                                continue
+                            else:
+                                empty_line_count = 0
+                            if self.lines[i+j].strip().startswith("COLUMN"):
+                                continue
+                            curr_line = self.lines[i+j].strip()
+                            curr_line = curr_line.rstrip(')')
+                            if ')' in curr_line[1:4]:
+                                curr_line = curr_line.split(None, 1)[1]
+                            next_lines.append(curr_line)
+                    #code helping to output relevant naming info 
+                    global line_searched
+                    line_searched = ((line).strip()).replace(":", "").replace(" ", "_")
+                    global line_read
+                    line_read = starting_line
+                    return '\n'.join(next_lines)
+            #lines below run if the input searched lines do not exist
+            print("input search data group is not found")
+            exit()
 
 def process_data(data):
     data_list = data.split("\n")
