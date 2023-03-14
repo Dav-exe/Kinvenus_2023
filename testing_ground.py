@@ -107,25 +107,30 @@ def convert_array_to_nc(array, filename):
         nc_file.createVariable(array[0][i], "f8", ("row",))
         nc_file.variables[array[0][i]][:] = [float(row[i]) for row in array[1:]]
     nc_file.close()
-    print(f"Array successfully saved as {filename}")
+    if print_info == True:
+        print(f"Array successfully saved as {filename}")
 
 def csv_saved(csv_file, filename):
     with open(filename, 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerows(csv_file)
-    print(f"Array successfully saved as {filename}")
+    if print_info == True:
+      print(f"Array successfully saved as {filename}")
+    
 
-'''---------------------------------USER-INTERFACE-----------------------------------'''
+'''----------------------------------USER-INTERFACE----------------------------------'''
 
 #change the file to be searched in the line 
 read_file = Out30BFile("kinvenus_2022oct07_so2cl2_s8_so2_3ppm_nominalclso2.out030b")
 #change the row searched for data in this line
 data_group = (read_file.get_lines("MIXING RATIOS :"))
-#change the TSTEP that the data is searched from under (expects a integer 0 or greater)
-    #0 indicates to look at data above the TSTEP and 1 below the first instance and so on
-TSTEP_number = 0
+#changing the TSTEP_number changes the TSTEP searched under (expects a integer 0 or greater)
+    #0 looks at data above the TSTEP and 1 below the first instance and so on
+TSTEP_number = 1
+#prints out additional information if = to true otherwise not 
+print_info = True 
 
-'''-----------------------------CHANGE_THESE_VALUES----------------------------------'''
+'''--------------------------------CHANGE_THESE_VALUES--------------------------------'''
 
 #space this out for readability
 ans = remove_duplicate_altitudes(merging_data(process_data(data_group)))
@@ -138,8 +143,9 @@ csv_saved(ans,csv_file_name)
 convert_array_to_nc(ans,NetCDF_file_name)
 '''
 
-print ("the data group read is",line_read)
-print ("the file read is",file_searched)
+if print_info == True:
+    print ("the data group read is",line_read)
+    print ("the file read is",file_searched)
 
 #print ("the code is looking ")
 
