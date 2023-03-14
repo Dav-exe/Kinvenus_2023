@@ -13,6 +13,7 @@ class Out30BFile:
 
     def get_lines(self, starting_line):
         for i, line in enumerate(self.lines):
+            #officer this man here 
             if line.strip() == starting_line:
                 next_lines = []
                 empty_line_count = 0
@@ -119,7 +120,6 @@ ans = remove_duplicate_altitudes(merging_data(process_data(d_lines)))
 #csv_saved(ans,"thiswontwork#2.csv")
 
 convert_array_to_nc(ans, "thiswontwork#3.nc")
-
 
 '''TO DO'''
 #add incorrect search response                                  |||DONE
