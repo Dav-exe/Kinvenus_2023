@@ -12,7 +12,6 @@ class Out30BFile:
         global file_searched
         file_searched = filepath
 
-
     def get_lines(self, starting_line):
         for i, line in enumerate(self.lines):
             #officer this man here 
@@ -35,9 +34,13 @@ class Out30BFile:
                         if ')' in curr_line[1:4]:
                             curr_line = curr_line.split(None, 1)[1]
                         next_lines.append(curr_line)
-                global line_searched 
-                line_searched = (line)
+                #code helping to output relevant naming info 
+                global line_searched
+                line_searched = ((line).strip()).replace(":", "").replace(" ", "_")
+                global line_read
+                line_read = starting_line
                 return '\n'.join(next_lines)
+        #lines below run if the input searched lines do not exist
         print("input search data group is not found")
         exit()
 
@@ -112,21 +115,37 @@ def csv_saved(csv_file, filename):
         writer.writerows(csv_file)
     print(f"Array successfully saved as {filename}")
 
+'''---------------------------------USER-INTERFACE-----------------------------------'''
+
 #change the file to be searched in the line 
-out30b = Out30BFile("kinvenus_2022oct07_so2cl2_s8_so2_3ppm_nominalclso2.out030b")
-#change the row searched for data in this line (for now must be the whole row)
-d_lines = (out30b.get_lines("MIXING RATIOS :"))
+read_file = Out30BFile("kinvenus_2022oct07_so2cl2_s8_so2_3ppm_nominalclso2.out030b")
+#change the row searched for data in this line
+data_group = (read_file.get_lines("MIXING RATIOS :"))
+#change the TSTEP that the data is searched from under (expects a integer 0 or greater)
+    #0 indicates to look at data above the TSTEP and 1 below the first instance and so on
+TSTEP_number = 0
 
-#find a better way of writing the ans bit 
-ans = remove_duplicate_altitudes(merging_data(process_data(d_lines)))
-#print (ans)
+'''-----------------------------CHANGE_THESE_VALUES----------------------------------'''
 
-csv_saved(ans,"thiswontwork#2.csv")
+#space this out for readability
+ans = remove_duplicate_altitudes(merging_data(process_data(data_group)))
 
-#convert_array_to_nc(ans, "thiswontwork#3.nc")
-print ("the data group read is",line_searched)
+csv_file_name = (line_searched + "from_" + file_searched + ".csv")
+NetCDF_file_name = (line_searched + "from_" + file_searched + ".nc")
+
+'''
+csv_saved(ans,csv_file_name)
+convert_array_to_nc(ans,NetCDF_file_name)
+'''
+
+print ("the data group read is",line_read)
 print ("the file read is",file_searched)
 
+#print ("the code is looking ")
+
+#above all TSETP
+
+#below the x TSTEP
 
 '''TO DO'''
 #add incorrect search response                                  |||DONE
@@ -135,3 +154,4 @@ print ("the file read is",file_searched)
 #change the search from the whole line to just a fraise         |||DONE
 #tidy and optimize                                              |||TO DO 
 #tell the user the array and file searched                      |||DONE
+#fix the naming of the output files                             |||DONE
