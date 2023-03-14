@@ -13,6 +13,7 @@ class Out30BFile:
         file_searched = filepath
 
     def get_lines(self, starting_line):
+
             for i, line in enumerate(self.lines):
                 if starting_line.strip() in line:
                     next_lines = []
@@ -127,7 +128,7 @@ data_group = (read_file.get_lines("MIXING RATIOS :"))
     #0 looks at data above the TSTEP and 1 below the first instance and so on
 TSTEP_number = 1
 #prints out additional information if = to true otherwise not 
-print_info = True 
+print_info = True
 
 '''--------------------------------CHANGE_THESE_VALUES--------------------------------'''
 
@@ -157,6 +158,6 @@ if print_info == True:
 #fix the called upon error at ans                               |||TO DO
 #make an adjustable search below TSTEP line                     |||TO DO
 #change the search from the whole line to just a fraise         |||DONE
-#tidy and optimize                                              |||TO DO 
+#tidy and optimize                                              |||DONE
 #tell the user the array and file searched                      |||DONE
 #fix the naming of the output files                             |||DONE
