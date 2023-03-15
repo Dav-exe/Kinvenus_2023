@@ -38,7 +38,7 @@ class Out30BFile:
                     global line_searched
                     line_searched = ((line).strip()).replace(":", "").replace(" ", "_")
                     global line_read
-                    line_read = starting_line
+                    line_read = line
                     return '\n'.join(next_lines)
             #lines below run if the input searched lines do not exist
             print("input search data group is not found")
@@ -122,11 +122,11 @@ def csv_saved(csv_file, filename):
 
 #change the file to be searched in the line 
 read_file = Out30BFile("kinvenus_2022oct07_so2cl2_s8_so2_3ppm_nominalclso2.out030b")
-#change the row searched for data in this line
-data_group = (read_file.get_lines("MIXING RATIOS :"))
 #changing the TSTEP_number changes the TSTEP searched under (expects a integer 0 or greater)
     #0 looks at data above the TSTEP and 1 below the first instance and so on
 TSTEP_number = 1
+#change the row searched for data in this line (is caps sensitive)
+data_group = (read_file.get_lines("MIXING RATIO"))
 #prints out additional information if = to true otherwise not 
 print_info = True
 
