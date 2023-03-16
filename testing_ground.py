@@ -38,7 +38,7 @@ class Out30BFile:
                     global line_searched
                     line_searched = ((line).strip()).replace(":", "").replace(" ", "_")
                     global line_read
-                    line_read = line
+                    line_read = line.strip()
                     return '\n'.join(next_lines)
             #lines below run if the input searched lines do not exist
             print("input search data group is not found")
@@ -122,6 +122,10 @@ def csv_saved(csv_file, filename):
 
 #change the file to be searched in the line 
 read_file = Out30BFile("kinvenus_2022oct07_so2cl2_s8_so2_3ppm_nominalclso2.out030b")
+read_file = Out30BFile("venus.out-100_fine_SO2-3ppm_new_correct")
+#venus.out-100_fine_SO2-3ppm_new_correct
+#kinvenus_2022oct07_so2cl2_s8_so2_3ppm_nominalclso2.out030b
+
 #changing the TSTEP_number changes the TSTEP searched under (expects a integer 0 or greater)
     #0 looks at data above the TSTEP and 1 below the first instance and so on
 TSTEP_number = 1
@@ -130,7 +134,7 @@ data_group = (read_file.get_lines("MIXING RATIO"))
 #prints out additional information if = to true otherwise not 
 print_info = True
 
-'''--------------------------------CHANGE_THESE_VALUES--------------------------------'''
+'''--------------------------------CHANGE-THESE-VALUES--------------------------------'''
 
 #space this out for readability
 ans = remove_duplicate_altitudes(merging_data(process_data(data_group)))
@@ -138,10 +142,10 @@ ans = remove_duplicate_altitudes(merging_data(process_data(data_group)))
 csv_file_name = (line_searched + "from_" + file_searched + ".csv")
 NetCDF_file_name = (line_searched + "from_" + file_searched + ".nc")
 
-'''
+
 csv_saved(ans,csv_file_name)
 convert_array_to_nc(ans,NetCDF_file_name)
-'''
+
 
 if print_info == True:
     print ("the data group read is",line_read)
