@@ -53,9 +53,12 @@ class Out30BFile:
 def get_list_element(num):
     if num == 0:
         return 0
+    elif num > len(read_file.count_tstep()):
+        print("Input TSTEP is larger than the total number of TSTEP.")
+        exit()
     else:
         return int(read_file.count_tstep()[num - 1])
-
+    
 def process_data(data):
     data_list = data.split("\n")
     arrays = []
@@ -139,13 +142,13 @@ read_file = Out30BFile("venus.out-100_fine_SO2-3ppm_new_correct")
 
 #changing the TSTEP_number changes the TSTEP searched under (expects a integer 0 or greater)
     #0 looks at data above the TSTEP and 1 below the first instance and so on
-TSTEP_number = 1
+TSTEP_number = 0
 
 #change the row searched for data in this line (is caps sensitive)
 data_group = (read_file.get_lines(("ATOMIC CONCENTRATIONS"), get_list_element(TSTEP_number), get_list_element(TSTEP_number+1)))
 
 #prints out additional information if = True ,if False doesn't
-print_info = True
+print_info = False
 
 '''--------------------------------CHANGE-THESE-VALUES--------------------------------'''
 
