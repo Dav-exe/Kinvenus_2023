@@ -12,37 +12,49 @@ class Out30BFile:
         global file_searched
         file_searched = filepath
 
-    def get_lines(self, starting_line):
+    def count_tstep(self):
+        tstep_lines = []
+        for i, line in enumerate(self.lines):
+            if "TSTEP" in line:
+                tstep_lines.append(i+1)
+        return tstep_lines
 
-            for i, line in enumerate(self.lines):
-                if starting_line.strip() in line:
-                    next_lines = []
-                    empty_line_count = 0
-                    for j in range(1, len(self.lines)):
-                        if i+j < len(self.lines):
-                            if not self.lines[i+j].strip():
-                                empty_line_count += 1
-                                if empty_line_count >= 2:
-                                    break
-                                continue
-                            else:
-                                empty_line_count = 0
-                            if self.lines[i+j].strip().startswith("COLUMN"):
-                                continue
-                            curr_line = self.lines[i+j].strip()
-                            curr_line = curr_line.rstrip(')')
-                            if ')' in curr_line[1:4]:
-                                curr_line = curr_line.split(None, 1)[1]
-                            next_lines.append(curr_line)
-                    #code helping to output relevant naming info 
-                    global line_searched
-                    line_searched = ((line).strip()).replace(":", "").replace(" ", "_")
-                    global line_read
-                    line_read = line.strip()
-                    return '\n'.join(next_lines)
-            #lines below run if the input searched lines do not exist
-            print("input search data group is not found")
-            exit()
+    def get_lines(self, search_term, start_line_num, end_line_num):
+        for i in range(start_line_num - 1, end_line_num):
+            line = self.lines[i]
+            if search_term.strip() in line:
+                next_lines = []
+                empty_line_count = 0
+                for j in range(i + 1, len(self.lines)):
+                    if not self.lines[j].strip():
+                        empty_line_count += 1
+                        if empty_line_count >= 2:
+                            break
+                        continue
+                    else:
+                        empty_line_count = 0
+                    if self.lines[j].strip().startswith("COLUMN"):
+                        continue
+                    curr_line = self.lines[j].strip()
+                    curr_line = curr_line.rstrip(')')
+                    if ')' in curr_line[1:4]:
+                        curr_line = curr_line.split(None, 1)[1]
+                    next_lines.append(curr_line)
+                # code helping to output relevant naming info
+                global line_searched
+                line_searched = ((line).strip()).replace(":", "").replace(" ", "_")
+                global line_read
+                line_read = line.strip()
+                return '\n'.join(next_lines)
+        # lines below run if the input searched lines do not exist
+        print("Input search data group is not found")
+        exit()
+
+def get_list_element(num):
+    if num == 0:
+        return 0
+    else:
+        return int(read_file.count_tstep()[num - 1])
 
 def process_data(data):
     data_list = data.split("\n")
@@ -120,8 +132,9 @@ def csv_saved(csv_file, filename):
 
 '''----------------------------------USER-INTERFACE----------------------------------'''
 
-#change the file to be searched in the line 
-read_file = Out30BFile("kinvenus_2022oct07_so2cl2_s8_so2_3ppm_nominalclso2.out030b")
+
+#change the file to be searched in the line below
+#read_file = Out30BFile("kinvenus_2022oct07_so2cl2_s8_so2_3ppm_nominalclso2.out030b")
 read_file = Out30BFile("venus.out-100_fine_SO2-3ppm_new_correct")
 #venus.out-100_fine_SO2-3ppm_new_correct
 #kinvenus_2022oct07_so2cl2_s8_so2_3ppm_nominalclso2.out030b
@@ -129,39 +142,27 @@ read_file = Out30BFile("venus.out-100_fine_SO2-3ppm_new_correct")
 #changing the TSTEP_number changes the TSTEP searched under (expects a integer 0 or greater)
     #0 looks at data above the TSTEP and 1 below the first instance and so on
 TSTEP_number = 1
+
 #change the row searched for data in this line (is caps sensitive)
-data_group = (read_file.get_lines("MIXING RATIO"))
-#prints out additional information if = to true otherwise not 
+data_group = (read_file.get_lines(("ATOMIC CONCENTRATIONS"), get_list_element(TSTEP_number), get_list_element(TSTEP_number+1)))
+
+#prints out additional information if = True ,if False doesn't
 print_info = True
 
 '''--------------------------------CHANGE-THESE-VALUES--------------------------------'''
 
-#space this out for readability
-ans = remove_duplicate_altitudes(merging_data(process_data(data_group)))
+final_output = remove_duplicate_altitudes(merging_data(process_data(data_group)))
 
-csv_file_name = (line_searched + "from_" + file_searched + ".csv")
-NetCDF_file_name = (line_searched + "from_" + file_searched + ".nc")
+csv_file_name = "TSTEP_"+str(TSTEP_number)+"_"+line_searched+"_from_"+file_searched+".csv"
+NetCDF_file_name = "TSTEP_"+str(TSTEP_number)+"_"+line_searched+"_from_"+file_searched+".nc"
 
 
-csv_saved(ans,csv_file_name)
-convert_array_to_nc(ans,NetCDF_file_name)
+#csv_saved(final_output,csv_file_name)
+convert_array_to_nc(final_output,NetCDF_file_name)
 
 
 if print_info == True:
     print ("the data group read is",line_read)
     print ("the file read is",file_searched)
-
-#print ("the code is looking ")
-
-#above all TSETP
-
-#below the x TSTEP
-
-'''TO DO'''
-#add incorrect search response                                  |||DONE
-#fix the called upon error at ans                               |||TO DO
-#make an adjustable search below TSTEP line                     |||TO DO
-#change the search from the whole line to just a fraise         |||DONE
-#tidy and optimize                                              |||DONE
-#tell the user the array and file searched                      |||DONE
-#fix the naming of the output files                             |||DONE
+    print ("the TSTEP selected is",TSTEP_number)
+    print ("the data range is from colum",get_list_element(TSTEP_number),"to",get_list_element(TSTEP_number+1))
