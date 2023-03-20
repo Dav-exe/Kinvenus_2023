@@ -2,6 +2,9 @@
 import numpy as np
 import csv
 import netCDF4
+import time
+
+start_time = time.time()
 
 class Out30BFile:
     def __init__(self, filepath):
@@ -141,7 +144,7 @@ read_file = Out30BFile("venus.out-100_fine_SO2-3ppm_new_correct")
 
 #changing the TSTEP_number changes the TSTEP searched under (expects a integer 0 or greater)
     #0 looks at data above the TSTEP and 1 below the first instance and so on
-TSTEP_number = 0
+TSTEP_number = 40
 
 #change the row searched for data in this line (is caps sensitive)
 data_group = (read_file.get_lines(("ATOMIC CONCENTRATIONS"), get_location(TSTEP_number), get_location(TSTEP_number+1)))
@@ -150,7 +153,7 @@ data_group = (read_file.get_lines(("ATOMIC CONCENTRATIONS"), get_location(TSTEP_
 print_info = True
 
 #outputs the data at the searched line in the selected file  if = True ,if False doesn't
-output_data = False
+output_data = True
 
 '''--------------------------------CHANGE-THESE-VALUES--------------------------------'''
 
@@ -169,3 +172,6 @@ if print_info == True:
     print ("the number of tsteps in the file are",(len(tstep_lines)))
     print ("the TSTEP selected is",TSTEP_number)
     print ("the data range is from colum",get_location(TSTEP_number),"to",get_location(TSTEP_number+1))
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print (f"Elapsed time: {elapsed_time:.2f} seconds")
