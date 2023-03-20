@@ -13,11 +13,12 @@ class Out30BFile:
         file_searched = filepath
 
     def count_tstep(self):
+        global tstep_lines
         tstep_lines = []
         for i, line in enumerate(self.lines):
             if "TSTEP" in line:
-                tstep_lines.append(i+1)
-        return tstep_lines
+                tstep_lines.append(i+1) 
+        return tstep_lines 
 
     def get_lines(self, search_term, start_line_num, end_line_num):
         for i in range(start_line_num - 1, end_line_num):
@@ -50,14 +51,14 @@ class Out30BFile:
         print("Input search data group is not found")
         exit()
 
-def get_list_element(num):
-    if num == 0:
+def get_location(TSTEP):
+    if TSTEP == 0:
         return 0
-    elif num > len(read_file.count_tstep()):
+    elif TSTEP > len(read_file.count_tstep()):
         print("Input TSTEP is larger than the total number of TSTEP.")
         exit()
     else:
-        return int(read_file.count_tstep()[num - 1])
+        return int(read_file.count_tstep()[TSTEP - 1])
     
 def process_data(data):
     data_list = data.split("\n")
@@ -135,20 +136,21 @@ def csv_saved(csv_file, filename):
 '''----------------------------------USER-INTERFACE----------------------------------'''
 
 #change the file to be searched in the line below
-    #read_file = Out30BFile("kinvenus_2022oct07_so2cl2_s8_so2_3ppm_nominalclso2.out030b")
 read_file = Out30BFile("venus.out-100_fine_SO2-3ppm_new_correct")
-    #venus.out-100_fine_SO2-3ppm_new_correct
-    #kinvenus_2022oct07_so2cl2_s8_so2_3ppm_nominalclso2.out030b
+                      #"kinvenus_2022oct07_so2cl2_s8_so2_3ppm_nominalclso2.out030b"
 
 #changing the TSTEP_number changes the TSTEP searched under (expects a integer 0 or greater)
     #0 looks at data above the TSTEP and 1 below the first instance and so on
 TSTEP_number = 0
 
 #change the row searched for data in this line (is caps sensitive)
-data_group = (read_file.get_lines(("ATOMIC CONCENTRATIONS"), get_list_element(TSTEP_number), get_list_element(TSTEP_number+1)))
+data_group = (read_file.get_lines(("ATOMIC CONCENTRATIONS"), get_location(TSTEP_number), get_location(TSTEP_number+1)))
 
-#prints out additional information if = True ,if False doesn't
-print_info = False
+#prints out additional information. if = True ,if False doesn't
+print_info = True
+
+#outputs the data at the searched line in the selected file  if = True ,if False doesn't
+output_data = False
 
 '''--------------------------------CHANGE-THESE-VALUES--------------------------------'''
 
@@ -157,13 +159,13 @@ final_output = remove_duplicate_altitudes(merging_data(process_data(data_group))
 csv_file_name = "TSTEP_"+str(TSTEP_number)+"_"+line_searched+"_from_"+file_searched+".csv"
 NetCDF_file_name = "TSTEP_"+str(TSTEP_number)+"_"+line_searched+"_from_"+file_searched+".nc"
 
-
-#csv_saved(final_output,csv_file_name)
-convert_array_to_nc(final_output,NetCDF_file_name)
-
+if output_data == True:
+    csv_saved(final_output,csv_file_name)
+    convert_array_to_nc(final_output,NetCDF_file_name)
 
 if print_info == True:
     print ("the data group read is",line_read)
     print ("the file read is",file_searched)
+    print ("the number of tsteps in the file are",(len(tstep_lines)))
     print ("the TSTEP selected is",TSTEP_number)
-    print ("the data range is from colum",get_list_element(TSTEP_number),"to",get_list_element(TSTEP_number+1))
+    print ("the data range is from colum",get_location(TSTEP_number),"to",get_location(TSTEP_number+1))
